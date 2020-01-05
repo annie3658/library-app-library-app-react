@@ -3,6 +3,12 @@ import AppNavbar from '../NavBar/AppNavbar';
 import BooksDataService from "../Config/BooksDataService";
 import {Link} from 'react-router-dom';
 import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import { DateUtils } from 'react-day-picker';
+import 'react-day-picker/lib/style.css';
+import dateFnsFormat from 'date-fns/format';
+import dateFnsParse from 'date-fns/parse';
+import * as moment from 'moment'
 
 class BookEditComponent extends Component{
 
@@ -60,8 +66,30 @@ class BookEditComponent extends Component{
 
     }
 
-    handleChangeDate = date =>{
-      console.log(date)
+     parseDate(str, format, locale) {
+        const parsed = dateFnsParse(str, format, new Date(), { locale });
+        if (DateUtils.isDate(parsed)) {
+            return parsed;
+        }
+        return undefined;
+    }
+
+     formatDate(date, format, locale) {
+        return dateFnsFormat(date, format, { locale });
+    }
+
+    handleChangePublishedDate = date =>{
+      const newDate = moment(date, 'DD-MM-YYYY').format('DD-MM-YYYY');
+        let book = {...this.state.book};
+        book.publishedDate = newDate
+        this.setState({book});
+    }
+
+    handleChangeDateOfBirth = date =>{
+        const newDate = moment(date, 'DD-MM-YYYY').format('DD-MM-YYYY');
+        let book = {...this.state.book};
+        book.author.dateOfBirth = newDate
+        this.setState({book});
     }
 
     handleInputAuthor = key => event => {
@@ -122,6 +150,25 @@ class BookEditComponent extends Component{
                     <Input type="text" name="title" id="title" value={book.title}
                            onChange={this.onChange} />
                 </FormGroup>
+                <FormGroup>
+                    <Label for="publishedDate">Published Date</Label>
+                </FormGroup>
+                <FormGroup>
+                    <DayPickerInput
+                        value={book.publishedDate}
+                        format={'dd-MM-yyyy'}
+                        onDayChange={this.handleChangePublishedDate}
+                        formatDate={this.formatDate}
+                        parseDate={this.parseDate}
+                        placeholder={`${dateFnsFormat(new Date(), 'dd-MM-yyyy')}`}
+                    />
+                </FormGroup>
+
+                <FormGroup>
+                    <Label for="description">Description</Label>
+                    <Input type="text" name="description" id="description" value={book.description}
+                           onChange={this.onChange} />
+                </FormGroup>
 
                 <FormGroup>
                     <Label for="rating">Rating</Label>
@@ -139,6 +186,20 @@ class BookEditComponent extends Component{
                     <Label for="lastName">Last Name</Label>
                     <Input type="text" name="lastName" id="lastName" value={book.author.lastName}
                            onChange={this.handleInputAuthor('lastName')} />
+                </FormGroup>
+
+                <FormGroup>
+                    <Label for="dateOfBirth">Date of Birth:</Label>
+                </FormGroup>
+                <FormGroup>
+                    <DayPickerInput
+                        value={book.author.dateOfBirth}
+                        format={'dd-MM-yyyy'}
+                        onDayChange={this.handleChangeDateOfBirth}
+                        formatDate={this.formatDate}
+                        parseDate={this.parseDate}
+                        placeholder={`${dateFnsFormat(new Date(), 'dd-MM-yyyy')}`}
+                    />
                 </FormGroup>
 
                 <FormGroup>

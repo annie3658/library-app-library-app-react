@@ -3,25 +3,30 @@ import AppNavbar from '../NavBar/AppNavbar';
 import BooksDataService from "../Config/BooksDataService";
 import {Link} from 'react-router-dom';
 import {Button, Container, Form, FormGroup, Input, Label} from 'reactstrap';
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import { DateUtils } from 'react-day-picker';
+import 'react-day-picker/lib/style.css';
+import dateFnsFormat from 'date-fns/format';
+import dateFnsParse from 'date-fns/parse';
+import * as moment from 'moment'
 
 class BookAddComponent extends Component{
 
     initialState = {
         book: {
-            isbn: '',
+            isbn: null,
             title: '',
             publishedDate: '',
             description: '',
             rating: 0,
             author: {
-                id: '',
                 bio: '',
                 dateOfBirth: '',
                 firstName: '',
                 lastName: ''
             },
             cover: {
-                id: '',
+                id: null,
                 bookTitle: '',
                 link: ''
             }
@@ -81,6 +86,32 @@ class BookAddComponent extends Component{
 
     };
 
+    parseDate(str, format, locale) {
+        const parsed = dateFnsParse(str, format, new Date(), { locale });
+        if (DateUtils.isDate(parsed)) {
+            return parsed;
+        }
+        return undefined;
+    }
+
+    formatDate(date, format, locale) {
+        return dateFnsFormat(date, format, { locale });
+    }
+
+    handleChangePublishedDate = date =>{
+        const newDate = moment(date, 'DD-MM-YYYY').format('DD-MM-YYYY');
+        let book = {...this.state.book};
+        book.publishedDate = newDate
+        this.setState({book});
+    }
+
+    handleChangeDateOfBirth = date =>{
+        const newDate = moment(date, 'DD-MM-YYYY').format('DD-MM-YYYY');
+        let book = {...this.state.book};
+        book.author.dateOfBirth = newDate
+        this.setState({book});
+    }
+
     onSubmit = (e) => {
         e.preventDefault();
         const {book} = this.state;
@@ -111,6 +142,26 @@ class BookAddComponent extends Component{
                         </FormGroup>
 
                         <FormGroup>
+                            <Label for="description">Description</Label>
+                            <Input type="text" name="description" id="description" value={book.description}
+                                   onChange={this.onChange} />
+                        </FormGroup>
+
+                        <FormGroup>
+                            <Label for="publishedDate">Published Date</Label>
+                        </FormGroup>
+                        <FormGroup>
+                            <DayPickerInput
+
+                                format={'dd-MM-yyyy'}
+                                onDayChange={this.handleChangePublishedDate}
+                                formatDate={this.formatDate}
+                                parseDate={this.parseDate}
+                                placeholder={`${dateFnsFormat(new Date(), 'dd-MM-yyyy')}`}
+                            />
+                        </FormGroup>
+
+                        <FormGroup>
                             <Label for="rating">Rating</Label>
                             <Input type="number" name="rating" id="rating" value={book.rating}
                                    onChange={this.onChange} />
@@ -125,6 +176,26 @@ class BookAddComponent extends Component{
                             <Label for="lastName">Last Name</Label>
                             <Input type="text" name="lastName" id="lastName" value={book.author.lastName}
                                    onChange={this.handleInputAuthor('lastName')} />
+                        </FormGroup>
+
+                        <FormGroup>
+                            <Label for="dateOfBirth">Date of Birth:</Label>
+                        </FormGroup>
+                        <FormGroup>
+                            <DayPickerInput
+
+                                format={'dd-MM-yyyy'}
+                                onDayChange={this.handleChangeDateOfBirth}
+                                formatDate={this.formatDate}
+                                parseDate={this.parseDate}
+                                placeholder={`${dateFnsFormat(new Date(), 'dd-MM-yyyy')}`}
+                            />
+                        </FormGroup>
+
+                        <FormGroup>
+                            <Label for="bio">Bio</Label>
+                            <Input type="text" name="bio" id="bio" value={book.author.bio}
+                                   onChange={this.handleInputAuthor('bio')} />
                         </FormGroup>
                         <h2>Cover Details</h2>
                         <FormGroup>

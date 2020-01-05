@@ -57,12 +57,13 @@ class BooksList extends Component{
         const booksList = books.map(book => {
 
             return <tr key={book.isbn}>
-                <td style={{whiteSpace: 'nowrap'}}>{book.title}</td>
+                <td style={{whiteSpace: 'pre-wrap'}}>{book.title}</td>
                 <td>{book.author.firstName} {book.author.lastName}</td>
                 <td>{book.description}</td>
-                <td>{book.publishedDate}</td>
+                <td style={{whiteSpace: 'nowrap'}}>{book.publishedDate}</td>
                 <td>{book.rating}</td>
-                {book.cover === null ? <td>N/A</td> : <td>{book.cover.link}</td>}
+                {/*{book.cover === null ? <td>N/A</td> : <td style={{whiteSpace: 'pre-wrap'}}>{book.cover.link}</td>}*/}
+                <td>{book.cover.link}</td>
                 <td>
                     <ButtonGroup>
                         <Button size="sm" color="primary" style={{ marginRight: 10}} onClick={() => this.updateBookClicked(book.isbn)}>Edit</Button>
@@ -80,7 +81,7 @@ class BooksList extends Component{
                         <Button color="success" onClick={this.addBookClicked}>Add Book</Button>
                     </div>
                     <h3>My Books</h3>
-                    <Table className="mt-4">
+                    <Table striped>
                         <thead>
                         <tr>
                             <th>Title</th>
